@@ -1,0 +1,18 @@
+# 비밀번호가 들어간 설정 파일
+application.properties
+
+# 빌드 결과물
+target/
+
+# STS / Eclipse 설정
+.metadata/
+.settings/
+.classpath
+.project
+.factorypath
+.apt_generated/
+bin/
+
+# 기타
+.DS_Store
+*.log
