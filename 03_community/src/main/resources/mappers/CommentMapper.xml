@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.community.board.model.mapper.CommentMapper">
+	
+	<insert id="insertComment" parameterType="CommentDTO">
+		<selectKey keyProperty="commentId" resultType="long" order="BEFORE">
+			SELECT SEQ_COMMENT.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO TB_COMMENT (COMMENT_ID, BOARD_ID, MEMBER_ID, CONTENT)
+		VALUES (#{commentId}, #{boardId}, #{memberId}, #{content})
+	</insert>
+	
+	<select id="selectCommentById" parameterType="long" resultType="CommentDTO">
+		SELECT C.COMMENT_ID, C.BOARD_ID, C.MEMBER_ID, C.CONTENT, C.CREATE_AT,
+			   TO_CHAR(C.CREATE_AT, 'YYYY-MM-DD HH24:MI') AS CREATE_AT_STR,
+			   NVL(M.NICKNAME, '탈퇴한 회원') AS WRITER_NICKNAME
+		  FROM TB_COMMENT C
+		  	LEFT JOIN TB_MEMBER M ON C.MEMBER_ID = M.MEMBER_ID
+		 WHERE C.COMMENT_ID = #{commentId}
+	</select>
+	
+	<delete id="deleteComment" parameterType="long">
+		DELETE FROM TB_COMMENT WHERE COMMENT_ID = #{commentId}
+	</delete>
+	
+	<select id="selectCommentsByBoardId" parameterType="long" resultType="CommentDTO">
+		SELECT C.COMMENT_ID, C.BOARD_ID, C.MEMBER_ID, C.CONTENT, C.CREATE_AT,
+			   TO_CHAR(C.CREATE_AT, 'YYYY-MM-DD HH24:MI') AS CREATE_AT_STR,
+			   NVL(M.NICKNAME, '탈퇴한 회원') AS WRITER_NICKNAME
+		  FROM TB_COMMENT C
+		  	LEFT JOIN TB_MEMBER M ON C.MEMBER_ID = M.MEMBER_ID
+		 WHERE C.BOARD_ID = #{boardId}
+		 ORDER BY C.COMMENT_ID ASC	
+	</select>
+	
+</mapper>
+
+
+
+

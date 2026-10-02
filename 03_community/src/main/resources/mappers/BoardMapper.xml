@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.community.board.model.mapper.BoardMapper">
+
+	<!--
+		sql 태그 : 여러 select 태그에서 공통으로 쓰는 sql 조각을 정의할 수 있음
+				  해당 조각을 사용하고자 하는 경우 include 태그를 사용.
+	-->
+	<sql id="searchWhere">
+		<where>
+			<if test="category != null and category != '' and category != '전체'">
+				AND B.CATEGORY = #{category}
+			</if>
+			
+			<if test="keyword != null and keyword != ''">
+				<choose>
+					<when test="searchType == 'title'">
+						AND B.TITLE LIKE '%' || #{keyword} || '%'
+					</when>
+					<when test="searchType == 'content'">
+						AND B.CONTENT LIKE '%' || #{keyword} || '%'
+					</when>
+					<when test="searchType == 'writer'">
+						AND M.NICKNAME LIKE '%' || #{keyword} || '%'
+					</when>
+					<otherwise>
+						AND (B.TITLE LIKE '%' || #{keyword} || '%'
+							OR B.CONTENT LIKE '%' || #{keyword} || '%')
+					</otherwise>
+				</choose>
+			</if>
+		</where> 	
+	</sql>
+
+	<select id="selectBoardListCount" parameterType="BoardSearchCondition" resultType="int">
+		SELECT COUNT(*)
+		  FROM TB_BOARD B
+		    LEFT JOIN TB_MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
+		<include refid="searchWhere" />
+	</select>
+
+	<select id="selectBoardList" parameterType="BoardSearchCondition" resultType="BoardDTO">
+		SELECT BOARD_ID, B.MEMBER_ID, CATEGORY, TITLE, COUNT, B.CREATE_AT, UPDATE_AT,
+		        TO_CHAR(B.CREATE_AT, 'YYYY-MM-DD HH24:MI') AS CREATE_AT_STR,
+		        NVL(M.NICKNAME, '탈퇴한 회원') AS WRITER_NICKNAME
+		  FROM TB_BOARD B
+		    LEFT JOIN TB_MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
+		<include refid="searchWhere" />
+		    
+		ORDER BY BOARD_ID DESC
+		
+		<!--
+			페이징 처리를 위해 OFFSET / FETCH NEXT 추가 (oracle 12c 이상)
+			: ORDER BY로 정렬된 결과셋에서 특정 행 수를 건너뛰고(OFFSET), 지정한 행 수만큼 조회(FETCH).
+			
+			OFFSET 건너뛸행수 ROWS
+			FETCH NEXT 조회할행수 ROWS ONLY
+		-->
+		OFFSET #{offset} ROWS
+		FETCH NEXT #{size} ROWS ONLY
+	</select>
+	
+	<insert id="insertBoard" parameterType="BoardDTO">
+		<!--
+			오라클에서 데이터 추가 시 사용된 시퀀스 값 추출(조회) 방법
+			selectKey 태그로 삽입 전 시퀀스를 읽어 DTO에 저장
+		-->
+		<selectKey keyProperty="boardId" resultType="long" order="BEFORE">
+			SELECT SEQ_BOARD.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO TB_BOARD (BOARD_ID, MEMBER_ID, CATEGORY, TITLE, CONTENT)
+		VALUES (#{boardId}, #{memberId}, #{category}, #{title}, #{content})
+	</insert>
+	
+	<insert id="insertBoardImage" parameterType="BoardImageDTO">
+		INSERT INTO TB_BOARD_IMAGE (IMAGE_ID, BOARD_ID, ORIGINAL_NAME, SAVE_NAME, IMAGE_PATH, IMAGE_ORDER)
+		VALUES (SEQ_BOARD_IMAGE.NEXTVAL, #{boardId}, #{originalName}, #{saveName}, #{imagePath}, #{imageOrder})
+	</insert>
+	
+	<update id="increaseViewCount" parameterType="long">
+		UPDATE TB_BOARD SET COUNT = COUNT + 1 WHERE BOARD_ID = #{boardId}
+	</update>
+	
+	<select id="selectBoardDetail" parameterType="long" resultType="BoardDTO">
+		SELECT BOARD_ID, B.MEMBER_ID, CATEGORY, TITLE, COUNT,
+		       B.CREATE_AT, UPDATE_AT, CONTENT,
+		       TO_CHAR(B.CREATE_AT, 'YYYY-MM-DD HH24:MI') AS CREATE_AT_STR,
+		       TO_CHAR(B.UPDATE_AT, 'YYYY-MM-DD HH24:MI') AS UPDATE_AT_STR,
+		       NVL(M.NICKNAME, '탈퇴한 회원') AS WRITER_NICKNAME
+		  FROM TB_BOARD B
+		    LEFT JOIN TB_MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
+		 WHERE BOARD_ID = #{boardId}
+	</select>
+	
+	<select id="selectImagesByBoardId" parameterType="long" resultType="BoardImageDTO">
+		SELECT IMAGE_ID, BOARD_ID, ORIGINAL_NAME, SAVE_NAME, IMAGE_PATH, IMAGE_ORDER, CREATE_AT
+		  FROM TB_BOARD_IMAGE
+		 WHERE BOARD_ID = #{boardId}
+		 ORDER BY IMAGE_ORDER ASC
+	</select>
+	
+	<delete id="deleteBoard">
+		DELETE FROM TB_BOARD WHERE BOARD_ID = #{boardId}
+	</delete>
+</mapper>
+
+
+
+

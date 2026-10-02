@@ -1,0 +1,160 @@
+/*  첨부 이미지 여러장 보여주는 공간*/
+.board-image-list{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.board-image-list img{
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+/*  게시글 목록 테이블 */
+.board-table-wrap{
+    overflow-x: auto;
+}
+
+.board-table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    table-layout: fixed;
+}
+
+.board-table thead th{
+    font-weight: 600;
+    padding: 12px 10px;
+    border-top: 2px solid #333;
+    border-bottom: 1px solid #dddddd;
+    background: #f5f5f5;
+    color: #555;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.board-table tbody td{
+    padding: 12px 10px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+    color: #333;
+}
+
+.board-table tbody tr:hover{
+    background: #fafafa;
+}
+
+.board-table_col-no{
+    width: 60px;
+}
+
+.board-table_col-category{
+    width: 90px;
+}
+
+.board-table_col-writer{
+    width: 110px;
+}
+
+.board-table_col-date{
+    width: 110px;
+}
+
+.board-table_col-count{
+    width: 80px;
+}
+
+.board-table_col-title{
+    overflow: hidden;
+}
+
+.board-table_category{
+    display: inline-block;
+    font-size: 12px;
+    padding: 2px 10px;
+    border-radius: 20px;
+    background: #dddddd;
+    color: #666666;
+}
+
+/* 게시글 상세보기 */
+
+.board-detail header{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.board-detail_content{
+    white-space: pre-wrap; /*textarea와 같이 줄바꿈 그대로 유지*/
+    min-height: 120px;
+    margin-bottom: 20px;
+}
+
+.board-detail_actions{
+    display: flex;
+    gap: 10px;
+    margin: 16px 0;
+}
+
+/* 댓글 입력창 */
+.comment-form{
+    display: flex;
+    gap: 8px;
+}
+
+.comment-form textarea{
+    flex: 1;
+}
+
+/* 댓글 영역 */
+.comment-section{
+    margin-top: 40px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.comment-list{
+    margin: 0 0 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment-list li{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: #fafafa;
+    border-radius: 6px;
+}
+
+.comment-list_body{
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.comment-list_writer{
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.comment-list_content{
+    font-size: 14px;
+}
+
+.comment-list_date{
+    font-size: 12px;
+    color: #aaaaaa;
+}
+

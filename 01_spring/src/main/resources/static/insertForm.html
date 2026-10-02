@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 등록</title>
+</head>
+<body>
+    <h1>회원 등록</h1>
+    <!--
+        현재 파일은 WEB-INF 폴더 밖에 추가함
+        => 브라우저에서 URL로 직접 접근이 가능!
+    -->
+
+    <!-- form:post>(label+input)*3+button -->
+    <form action="/member/insert" method="post">
+        <label for="name">이름: </label>
+        <input type="text" id="name" name="name" required> <br>
+        
+        <label for="email">이메일: </label>
+        <input type="text" id="email" name="email" required> <br>
+        
+        <label for="age">나이: </label>
+        <input type="number" id="age" name="age" value="20"> <br>
+        
+        <button>등록</button>
+    </form>
+
+    <p>
+        <a href="/member/list">목록으로 돌아가기..</a>
+    </p>
+</body>
+</html>

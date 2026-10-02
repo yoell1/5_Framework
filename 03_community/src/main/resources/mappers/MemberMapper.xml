@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.community.member.model.mapper.MemberMapper">
+
+	<insert id="insertMember" parameterType="MemberDTO">
+		INSERT INTO TB_MEMBER (MEMBER_ID, MEMBER_PWD, MEMBER_NAME, NICKNAME, EMAIL, PROFILE) 
+		VALUES (#{memberId}, #{memberPwd}, #{memberName}, #{nickname}, #{email}, #{profile})
+	</insert>
+	
+	<select id="countByMemberId" parameterType="string" resultType="int">
+		SELECT COUNT(*) FROM TB_MEMBER WHERE MEMBER_ID = #{memberId}		
+	</select>
+	
+	<select id="selectByMemberId" parameterType="string" resultType="MemberDTO">
+		SELECT MEMBER_ID,
+		       MEMBER_PWD,
+		       MEMBER_NAME,
+		       NICKNAME,
+		       EMAIL, 
+		       PROFILE,
+		       TO_CHAR(CREATE_AT, 'YYYY-MM-DD HH24:MI') AS CREATE_AT_STR
+		  FROM TB_MEMBER
+		 WHERE MEMBER_ID = #{memberId}	
+	</select>
+	
+	<delete id="deleteMember" parameterType="string">
+		DELETE FROM TB_MEMBER WHERE MEMBER_ID = #{memberId}
+	</delete>
+	
+</mapper>
+
+
+
+
