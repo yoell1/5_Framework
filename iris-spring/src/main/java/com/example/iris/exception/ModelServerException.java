@@ -2,6 +2,7 @@ package com.example.iris.exception;
 
 import org.springframework.http.HttpStatusCode;
 
+
 /** 모델 서버 호출 실패. 클라이언트에 돌려줄 상태 코드와 JSON 본문을 담는다. */
 public class ModelServerException extends RuntimeException {
 
