@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>로그 분석</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>로그 분석</h1>
+    <div class="controls">
+      <label>
+        집계 기간
+        <select id="minutes">
+          <option value="5">최근 5분</option>
+          <option value="15">최근 15분</option>
+          <option value="30" selected>최근 30분</option>
+          <option value="60">최근 1시간</option>
+          <option value="180">최근 3시간</option>
+        </select>
+      </label>
+      <button id="refresh" type="button">새로고침</button>
+      <button id="traffic" type="button">테스트 요청 20회 보내기</button>
+    </div>
+  </header>
+
+  <p id="message" class="message"></p>
+
+  <section class="cards">
+    <div class="card"><span class="label">전체 요청</span><strong id="total">-</strong></div>
+    <div class="card"><span class="label">에러(5xx)</span><strong id="errors">-</strong></div>
+    <div class="card"><span class="label">에러율</span><strong id="errorRate">-</strong></div>
+    <div class="card"><span class="label">평균 응답시간</span><strong id="avgMs">-</strong></div>
+  </section>
+
+  <section class="grid">
+    <div class="panel wide">
+      <h2>시간대별 요청 수</h2>
+      <div class="chart"><canvas id="timelineChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>상태코드 분포 (상위 5개)</h2>
+      <div class="chart"><canvas id="statusChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>API별 평균 응답시간 (ms, 상위 5개)</h2>
+      <div class="chart"><canvas id="pathChart"></canvas></div>
+    </div>
+  </section>
+
+  <p class="note">10초마다 자동으로 갱신됩니다. 로그가 Logstash를 거쳐 Elasticsearch에 반영되기까지 몇 초 걸립니다.</p>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

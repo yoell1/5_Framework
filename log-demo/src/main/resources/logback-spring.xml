@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- application.yml의 logstash.destination 값을 읽습니다 -->
+    <springProperty scope="context" name="LOGSTASH_DESTINATION"
+                    source="logstash.destination" defaultValue="localhost:9200"/>
+    <springProperty scope="context" name="APP_NAME"
+                    source="spring.application.name" defaultValue="log-demo"/>
+
+    <!-- 1) 콘솔 출력: 사람이 IDE에서 볼 용도. traceId가 함께 찍힙니다. -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level [%X{traceId:-}] %logger{20} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 2) Logstash로 JSON 전송: 줄 단위 JSON(json_lines)으로 TCP 전송합니다. -->
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${LOGSTASH_DESTINATION}</destination>
+        <!-- Logstash가 꺼져 있다가 켜지면 5초마다 재접속을 시도합니다. -->
+        <reconnectionDelay>5 seconds</reconnectionDelay>
+        <!-- 전송 대기 버퍼. 가득 차면 새 로그를 버려서 앱이 멈추지 않게 합니다. -->
+        <ringBufferSize>8192</ringBufferSize>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- 모든 로그에 붙는 고정 필드 -->
+            <customFields>{"app":"${APP_NAME}"}</customFields>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="LOGSTASH"/>
+    </root>
+
+</configuration>
